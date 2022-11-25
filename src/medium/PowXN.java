@@ -1,7 +1,7 @@
 package medium;
 
 /**
- * @Question :
+ * @Question : 50
  */
 public class PowXN {
 
