@@ -12,7 +12,7 @@ public class SpiralMatrix {
      * get all edges of matrix
      *
      * @param matrix  m * n matrix
-     * @param list    store value
+     * @param list    store edge elements of matrix
      * @param visited visited array
      */
     public static void getEdgeElements(int[][] matrix, List<Integer> list, boolean[][] visited) {
@@ -56,38 +56,111 @@ public class SpiralMatrix {
             }
         }
     }
+    /**
+     * get all edges of matrix (optimise)
+     *
+     * @param matrix  m * n matrix
+     * @param list    store edge elements of matrix
+     * @param visited visited array
+     */
+    public static void getEdgesElementsM2(int[][] matrix, boolean[][] visited, List<Integer> list) {
+
+        int row = 0;
+        int col = 0;
+        /// if the matrix is 1D.
+
+        // if matrix is a row matrix then
+        // add all elements of the that row and return
+        if (matrix.length == 1) {
+            while (col < matrix[0].length) {
+                visited[row][col] = true;
+                list.add(matrix[row][col]);
+                col++;
+            }
+            return;
+        }
+        // if matrix is a column matrix then
+        // add all elements of that column and return
+        if (matrix[0].length == 1) {
+            while (row < matrix.length) {
+                visited[row][col] = true;
+                list.add(matrix[row][col]);
+                row++;
+            }
+            return;
+        }
+        /// if the matrix is 2D
+
+        // move towards right on the edge of matrix
+        // and stop before the last element.
+        while (col < matrix[0].length - 1) {
+            visited[row][col] = true;
+            list.add(matrix[row][col]);
+            col++;
+        }
+        // move towards down on the edge of matrix
+        // and stop before the last element.
+        while (row < matrix.length - 1) {
+            visited[row][col] = true;
+            list.add(matrix[row][col]);
+            row++;
+        }
+        // move towards left on the edge of matrix
+        // and stop before the last element.
+        while (col > 0) {
+            visited[row][col] = true;
+            list.add(matrix[row][col]);
+            col--;
+        }
+        // move towards up on the edge of matrix
+        // and stop before the last element.
+        while (row > 0) {
+            visited[row][col] = true;
+            list.add(matrix[row][col]);
+            row--;
+        }
+    }
 
     /**
      * print elements in spiral traversal.
      *
      * @param matrix  matrix
-     * @param list    list to store value
+     * @param list    list to store elements
      * @param visited visited array
      */
-    public static void spiralMatrix(int[][] matrix, List<Integer> list, boolean[][] visited) {
+    public static void spiralMatrix(int[][] matrix, boolean[][] visited, List<Integer> list) {
 
-        getEdgeElements(matrix, list, visited);
-        int newROW = matrix.length - 2;
-        int newCOLUMN = matrix[0].length - 2;
+        getEdgesElementsM2(matrix, visited, list);
+        // create a new length for new matrix.
+        // new length of row and column is always 2 less than
+        // from previous matrix's row and column length respectively.
+        int subROW = matrix.length - 2;
+        int subCOLUMN = matrix[0].length - 2;
 
-        if (newROW < 1 || newCOLUMN < 1) return;
-        int[][] newMatrix = new int[newROW][newCOLUMN];
-        boolean[][] newVisited = new boolean[newROW][newCOLUMN];
+        // if the length of row or column is
+        // less than one then it's not a valid matrix.
+        if (subROW < 1 || subCOLUMN < 1) {
+            return;
+        }
+        int[][] subMatrix = new int[subROW][subCOLUMN];
+        boolean[][] subVisited = new boolean[subROW][subCOLUMN];
 
+        // create a sub matrix with not visited elements of previous matrix.
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[0].length; j++) {
                 if (!visited[i][j]) {
-                    newMatrix[i - 1][j - 1] = matrix[i][j];
+                    subMatrix[i - 1][j - 1] = matrix[i][j];
                 }
             }
         }
-        spiralMatrix(newMatrix, list, newVisited);
+        // recursive call for sub matrix.
+        spiralMatrix(subMatrix, subVisited, list);
     }
 
     public static List<Integer> spiralMatrix(int[][] matrix) {
         List<Integer> list = new ArrayList<>();
         boolean[][] visited = new boolean[matrix.length][matrix[0].length];
-        spiralMatrix(matrix, list, visited);
+        spiralMatrix(matrix, visited, list);
         return list;
     }
 
